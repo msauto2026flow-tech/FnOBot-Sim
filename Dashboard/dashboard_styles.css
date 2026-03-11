@@ -1,0 +1,205 @@
+/*
+================================================================================
+  FILE: dashboard_styles.css
+  LOCATION: FnOBot/Dashboard/dashboard_styles.css
+================================================================================
+
+  GYST (What this file contains):
+  ─────────────────────────────────────────────────────────────────────────────
+  All visual styling for the Nifty F&O Live Dashboard.
+
+  Theme: Dark navy background with cyan blue accents
+  Approved: 06 Mar 2026
+
+  Sections:
+    1. CSS Variables      — Colour palette, shadows, spacing tokens
+    2. Reset & Base       — Body, font, box-sizing
+    3. Topbar             — Sticky header with logo and countdown
+    4. Layout             — Page wrapper, section labels, dividers
+    5. Index Cards        — NIFTY / BANKNIFTY snapshot cards
+       ├── Card header    — Symbol + signal badge (colour coded)
+       ├── Price Band     — Spot + Futures side by side
+       ├── Metrics Grid   — ATM, PCR, Max Pain, Spot vs MP
+       ├── S&R Levels     — Resistance (red) and Support (green) badges
+       └── Setup Scores   — Animated progress bar scoring (4 types)
+    6. Option Chain       — ATM ±5 table with OI delta columns
+       ├── Tab buttons    — NIFTY / BANKNIFTY toggle
+       ├── Column headers — CALLS (dark red) / STRIKE (cyan) / PUTS (dark green)
+       ├── Delta columns  — 15m, 1h, PrevDay change with ▲▼ arrows
+       └── ATM row        — Dark yellow highlight for at-the-money strike
+    7. Top Movers         — Nifty 50 gainers and losers
+    8. Spike Log          — OI spike alert table
+    9. Footer             — Last update time + countdown
+
+  Colour Logic:
+    Bullish signals  → Green (#2ecc71, #0d1f14 bg)
+    Bearish signals  → Red   (#c0392b, #1a0505 bg)
+    Neutral          → Amber (#e67e22, #1f1500 bg)
+    OI Increase ▲    → Green text (#00c853)
+    OI Decrease ▼    → Red text   (#ff1744)
+    Accent / Strike  → Cyan (#00e5ff)
+
+  Fonts:
+    Inter        — UI labels, headings, buttons, legends (clean & modern)
+    JetBrains Mono — Numbers, prices, OI values (monospaced for alignment)
+
+  To edit colours: change variables in :root
+  To edit layout:  adjust grid, gap and padding values in sections 4-7
+================================================================================
+*/
+
+/* ── DESIGN PREVIEW: Original dark theme + Inter headers (replacing Syne) ── */
+
+:root {
+  --bg:       #080d18;
+  --s1:       #0f1623;
+  --s2:       #141d2e;
+  --bd:       #1c2a3e;
+  --tx:       #dde6f0;
+  --mt:       #5a7a99;
+  --ac:       #00e5ff;   /* cyan accent */
+  --blue:     #2979ff;
+  --green:    #00c853;
+  --red:      #ff1744;
+  --orange:   #ffab40;
+  --shadow:   0 2px 8px rgba(0,0,0,.4);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--tx); font-family:"JetBrains Mono",monospace; font-size:13px; min-height:100vh; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--s1);
+  border-bottom: 1px solid var(--bd);
+  padding: 0 28px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-family: "Inter", sans-serif;   /* ← Inter instead of Syne */
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ac);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+}
+.logo-dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+.topbar-meta { color: var(--mt); font-size: 11px; display:flex; gap:20px; align-items:center; }
+#countdown { color: var(--ac); font-weight:600; }
+
+/* LAYOUT */
+.wrap { max-width:1500px; margin:0 auto; padding:20px 24px; }
+.section-label {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--mt);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* CARDS */
+.cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+.card { background:var(--s1); border:1px solid var(--bd); border-radius:10px; overflow:hidden; box-shadow:var(--shadow); }
+.card-top {
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--bd);
+}
+.sym {
+  font-family: "Inter", sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ac);
+  letter-spacing: .5px;
+}
+.sig-badge { font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:.5px; }
+.card-body { padding:16px 18px; }
+
+/* Price band */
+.price-band { display:flex; background:var(--s2); border-radius:8px; overflow:hidden; margin-bottom:14px; }
+.price-col { flex:1; padding:12px 16px; }
+.price-divider { width:1px; background:var(--bd); margin:8px 0; }
+.ml { font-size:9px; font-weight:600; letter-spacing:1.5px; color:var(--mt); text-transform:uppercase; margin-bottom:4px; font-family:"Inter",sans-serif; }
+.mv { font-size:15px; font-weight:700; color:var(--tx); font-family:"JetBrains Mono",monospace; }
+.mv.lg { font-size:22px; color:#fff; }
+.contract-tag { font-size:9px; color:var(--mt); }
+.basis-tag { font-size:11px; font-weight:600; margin-top:3px; }
+
+/* Metric grid */
+.metric-row { display:flex; gap:10px; margin-bottom:12px; }
+.metric-blk { flex:1; background:var(--s2); border-radius:6px; padding:8px 10px; }
+.divider { height:1px; background:var(--bd); margin:12px 0; }
+
+/* S&R */
+.sr-block { text-align:center; padding:6px 0; }
+.sr-row { margin:4px 0; }
+.lv { display:inline-block; padding:3px 10px; border-radius:4px; font-size:11px; font-weight:700; margin:2px; }
+.rv { background:#1f0a0a; color:#ff6e6e; border:1px solid #3a1010; }
+.sv { background:#0a1f0a; color:#69f0ae; border:1px solid #103a10; }
+.sr-label { font-size:10px; color:var(--mt); margin:4px 0; font-family:"Inter",sans-serif; }
+
+/* Setup scores */
+.sc-title-lbl { font-family:"Inter",sans-serif; font-size:9px; font-weight:600; letter-spacing:1.5px; color:var(--mt); text-transform:uppercase; margin-bottom:8px; }
+.sb { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.sl { width:80px; font-size:11px; color:var(--mt); }
+.sbr { flex:1; height:5px; background:#1a2535; border-radius:2px; overflow:hidden; }
+.sbf { height:100%; border-radius:2px; }
+.score-val { width:28px; font-size:11px; font-weight:700; text-align:right; color:var(--tx); }
+.best-lbl { margin-top:8px; font-size:11px; border-top:1px solid var(--bd); padding-top:8px; color:var(--tx); }
+
+/* CHAIN */
+.chain-section { background:var(--s1); border:1px solid var(--bd); border-radius:10px; overflow:hidden; margin-bottom:16px; box-shadow:var(--shadow); }
+.chain-header { background:var(--s2); border-bottom:1px solid var(--bd); padding:12px 18px; display:flex; align-items:center; gap:12px; }
+.chain-title { font-family:"Inter",sans-serif; font-size:12px; font-weight:700; color:var(--tx); letter-spacing:.5px; }
+.tabs { display:flex; gap:6px; margin-left:auto; }
+.tab { background:var(--s1); border:1px solid var(--bd); color:var(--mt); padding:5px 16px; border-radius:6px; cursor:pointer; font-family:"Inter",sans-serif; font-size:12px; font-weight:600; transition:all .2s; }
+.tab.active { background:var(--ac); color:#000; border-color:var(--ac); font-weight:700; }
+.ct { width:100%; border-collapse:collapse; font-size:12px; }
+.ch th { padding:8px 10px; font-size:9px; letter-spacing:1px; font-weight:700; text-transform:uppercase; font-family:"Inter",sans-serif; }
+.ch2 th { padding:6px 10px; font-size:9px; color:var(--mt); font-weight:700; border-bottom:2px solid var(--bd); font-family:"Inter",sans-serif; }
+.ce-head { background:#1f0a0a; color:#ff6e6e; text-align:center; }
+.pe-head { background:#0a1f0a; color:#69f0ae; text-align:center; }
+.strike-head { background:var(--s2); color:var(--ac); text-align:center; border-left:1px solid var(--bd); border-right:1px solid var(--bd); }
+.ct td { padding:6px 10px; border-bottom:1px solid var(--bg); text-align:center; }
+.ct .r { text-align:right; }
+.strike-col { font-weight:700; color:var(--ac); background:var(--s2); border-left:1px solid var(--bd); border-right:1px solid var(--bd); text-align:center; }
+.oi-num { font-weight:600; }
+.ltp-c { color:#ff6e6e; } .ltp-p { color:#69f0ae; }
+.atm-row td { background:#1a2200 !important; }
+.atm-row .strike-col { background:#1a2200 !important; color:#ffeb3b !important; font-weight:700; }
+.chain-legend { padding:8px 18px; background:var(--s2); border-top:1px solid var(--bd); font-size:10px; color:var(--mt); display:flex; gap:20px; flex-wrap:wrap; font-family:"Inter",sans-serif; }
+
+/* MOVERS */
+.bottom-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.movers-wrap { background:var(--s1); border:1px solid var(--bd); border-radius:10px; overflow:hidden; }
+.mv-card { padding:14px 16px; }
+.mv-card+.mv-card { border-top:1px solid var(--bd); }
+.mv-head { font-family:"Inter",sans-serif; font-size:10px; font-weight:700; letter-spacing:1px; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--bd); }
+.mv-head.up { color:var(--green); } .mv-head.dn { color:var(--red); }
+.mv-table { width:100%; border-collapse:collapse; font-size:12px; }
+.mv-table td { padding:4px 6px; }
+.sym-name { font-weight:600; color:var(--tx); }
+.up { color:var(--green); font-weight:700; } .dn { color:var(--red); font-weight:700; }
+
+/* SPIKE */
+.spike-section { background:var(--s1); border:1px solid var(--bd); border-radius:10px; overflow:hidden; }
+.spike-head { background:var(--s2); border-bottom:1px solid var(--bd); padding:12px 18px; }
+.spike-head-title { font-family:"Inter",sans-serif; font-size:12px; font-weight:700; color:var(--tx); letter-spacing:.5px; }
+.spike-table { width:100%; border-collapse:collapse; font-size:12px; }
+.spike-table th { padding:8px 12px; font-size:9px; letter-spacing:1px; color:var(--mt); font-weight:700; text-transform:uppercase; background:var(--s2); border-bottom:1px solid var(--bd); font-family:"Inter",sans-serif; }
+.spike-table td { padding:7px 12px; border-bottom:1px solid var(--bd); }
+.ext-row td { background:#1f0005; color:#ff6e6e; font-weight:600; }
+.sig-row td { background:#1f1000; color:var(--orange); font-weight:600; }
+.nd { color:var(--mt); text-align:center; padding:16px !important; font-style:italic; }
+
+/* FOOTER */
+.footer { text-align:center; color:var(--mt); font-size:10px; padding:16px; border-top:1px solid var(--bd); font-family:"Inter",sans-serif; }
